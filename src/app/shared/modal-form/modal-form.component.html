@@ -1,0 +1,17 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ title }}</h2>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <div class="modal-footer" *ngIf="!hideSave">
+      <button (click)="save()">Guardar</button>
+      <button (click)="close()">Cancelar</button>
+    </div>
+  </div>
+</div>

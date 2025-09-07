@@ -1,0 +1,22 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <button class="menu-btn" (click)="onToggleClick()">☰ Menú</button>
+    <div class="contact-info">
+      <span>Telf: 914 044 602</span>
+<span>Correo: soporte&#64;urbano.com.pe</span>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <div *ngIf="isLoggedIn; else loggedOut" class="user-greeting">
+      👋 ¡Hola, {{ nombre }}!
+      <button class="btn btn-outline-dark salir-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+
+    <ng-template #loggedOut>
+      <a class="login-button" routerLink="/login">
+        <span class="login-icon">👤</span> Iniciar sesión
+      </a>
+    </ng-template>
+  </div>
+</nav>

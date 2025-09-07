@@ -1,0 +1,60 @@
+<div class="crud-container">
+  <h2>Gestión de Tickets</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">Agregar Ticket</button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+    <input [(ngModel)]="ticketEnModal.descripcion" [readonly]="modalModo === 'ver'" placeholder="Descripción" />
+    <input [(ngModel)]="ticketEnModal.titulo" [readonly]="modalModo === 'ver'" placeholder="Título" />
+
+<select
+  [(ngModel)]="ticketEnModal.prioridad"
+  [disabled]="modalModo === 'ver'"
+>
+  <option [ngValue]="undefined">-- Selecciona una Prioridad --</option>
+  <option *ngFor="let prioridad of prioridades" [ngValue]="prioridad">{{ prioridad.nombre }}</option>
+</select>  </app-modal-form>
+
+  <hr />
+
+ <table>
+  <thead>
+    <tr>
+      <th>Descripción</th>
+      <th>Título</th>
+      <th>Estado</th>
+      <th>Prioridad</th>
+            <th>Usuario</th>
+
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ticket of tickets">
+      <td>{{ ticket.descripcion }}</td>
+      <td>{{ ticket.titulo }}</td>
+            <td>{{ ticket.estado?.nombre}}</td>
+      <td>{{ ticket.prioridad?.nombre}}</td>
+            <td>{{ ticket.usuario?.nombre }}</td>
+
+      <td>
+        <button class="btn btn-info btn-sm" (click)="abrirVer(ticket)">Ver</button>
+        <button class="btn btn-warning btn-sm" (click)="abrirEditar(ticket)">Editar</button>
+        <button class="btn btn-danger btn-sm" (click)="eliminarTicket(ticket.idTicket)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>
+

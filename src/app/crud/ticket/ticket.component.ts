@@ -1,0 +1,184 @@
+import { Component, ViewChild } from '@angular/core';
+import { Ticket } from '../../model/ticket.model';
+import { CrudService } from '../crud.service';
+import { FormsModule } from '@angular/forms';
+import { NgFor, NgIf } from '@angular/common';
+import { ModalFormComponent } from "../../shared/modal-form/modal-form.component";
+import { ConfirmModalComponent } from "../../shared/confirm-modal/confirm-modal.component";
+import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
+import { ErrorHandlerService } from '../../core/error/errorhandler.service';
+import { Estado } from '../../model/estado.model';
+import { Prioridad } from '../../model/prioridad.model';
+import { AuthService } from '../../core/auth/auth.service';
+import { Usuario } from '../../model/usuario.model';
+
+@Component({
+  selector: 'app-ticket',
+  imports: [FormsModule, NgFor, ModalFormComponent, ConfirmModalComponent, AlertModalComponent],
+  templateUrl: './ticket.component.html',
+  
+  styleUrls: ['../crud.component.css']  // sube una carpeta para llegar a "crud" donde está el CSS
+})
+export class TicketComponent {
+  tickets: Ticket[] = [];
+    estados: Estado[] = [];
+    prioridades: Prioridad[] = [];
+
+  ticketEnModal: Partial<Ticket> = {};
+  modalModo: 'crear' | 'editar' | 'ver' = 'crear';
+  modalTitulo = '';
+
+  @ViewChild('modal') modalComponent!: ModalFormComponent;
+  @ViewChild('confirmModal') confirmModal!: ConfirmModalComponent;
+  @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
+
+  constructor(
+    private crudService: CrudService<Ticket>,
+        private estadoService: CrudService<Estado>,
+        private prioridadService: CrudService<Prioridad>,
+  private authService: AuthService,  // inyectar aquí
+
+    private errorHandler: ErrorHandlerService
+  ) {}
+
+  ngOnInit(): void {
+    this.getTickets();
+    this.getEstados();
+    this.getPrioridades();
+
+  }
+
+getTickets(): void {
+  const rol = this.authService.getCurrentRol();
+  const email = this.authService.getCurrentUsername(); // esto es el email guardado
+
+  if (rol === 1) { // Asumiendo 1 = administrador
+    this.crudService.getAll('tickets').subscribe({
+      next: (data) => this.tickets = data,
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  } else {
+    this.crudService.getAll(`tickets?usuario=${email}`).subscribe({
+      next: (data) => this.tickets = data,
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  }
+}
+
+
+
+   getEstados(): void {
+    this.estadoService.getAll('estados').subscribe({
+      next: (data) => this.estados = data,
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  }
+
+   getPrioridades(): void {
+    this.prioridadService.getAll('prioridades').subscribe({
+      next: (data) => this.prioridades = data,
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  }
+
+  abrirCrear(): void {
+    this.modalModo = 'crear';
+    this.modalTitulo = 'Crear Ticket';
+      const estadoPorDefecto = this.estados.find(e => e.idEstado === 1);
+
+    this.ticketEnModal = {    estado: estadoPorDefecto ?? { idEstado: 1, nombre: 'Nuevo' } // fallback si aún no cargaron los estados
+};
+    this.modalComponent.open();
+    
+  }
+
+  abrirEditar(ticket: Ticket): void {
+    this.modalModo = 'editar';
+    this.modalTitulo = 'Editar Ticket';
+    this.ticketEnModal = { ...ticket };
+    this.modalComponent.open();
+  }
+
+  abrirVer(ticket: Ticket): void {
+    this.modalModo = 'ver';
+    this.modalTitulo = 'Detalle del Ticket';
+    this.ticketEnModal = { ...ticket };
+    this.modalComponent.open();
+  }
+
+  cancelarModal(): void {
+    this.ticketEnModal = {};
+  }
+confirmarAccionModal(): void {
+  if (this.modalModo === 'crear') {
+    const usuarioActual = this.authService.getCurrentUsuario();
+    if (usuarioActual) {
+      this.ticketEnModal.usuario = usuarioActual;
+    } else {
+      // Opcional: manejar caso sin usuario (ej: mostrar error)
+      this.alertModal.open('Error', 'No se pudo obtener el usuario actual.');
+      return;
+    }
+
+    this.crudService.create('tickets', this.ticketEnModal as Ticket).subscribe({
+      next: () => {
+        this.getTickets();
+        this.modalComponent.close();
+        this.alertModal.open('Creado', 'El ticket ha sido creado exitosamente.');
+      },
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  }
+
+  if (this.modalModo === 'editar') {
+    this.crudService.update('tickets', this.ticketEnModal.idTicket!, this.ticketEnModal as Ticket).subscribe({
+      next: () => {
+        this.getTickets();
+        this.modalComponent.close();
+        this.alertModal.open('Actualizado', 'El ticket ha sido actualizado correctamente.');
+      },
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      }
+    });
+  }
+
+  this.ticketEnModal = {};
+}
+
+
+  eliminarTicket(id: number): void {
+    this.confirmModal
+      .open('¿Estás seguro de que deseas eliminar este ticket?', 'eliminar')
+      .then((confirmado) => {
+        if (confirmado) {
+          this.crudService.delete('tickets', id).subscribe({
+            next: () => {
+              this.getTickets();
+              this.alertModal.open('Eliminado', 'El ticket ha sido eliminado correctamente.');
+            },
+            error: (error) => {
+              const err = this.errorHandler.getErrorData(error);
+              this.alertModal.open(err.title, err.message, err.details);
+            }
+          });
+        }
+      });
+  }
+}

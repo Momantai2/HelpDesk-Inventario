@@ -1,0 +1,23 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal">
+    <div class="modal-header">
+      <h5>Confirmar</h5>
+      <button class="close-btn" (click)="cancel()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <p>{{ message }}</p>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="cancel()">Cancelar</button>
+      <button
+        [class.btn-danger]="actionType === 'eliminar'"
+        [class.btn-primary]="actionType === 'confirmar'"
+        (click)="confirm()"
+      >
+        {{ actionType === 'eliminar' ? 'Eliminar' : 'Confirmar' }}
+      </button>
+    </div>
+  </div>
+</div>

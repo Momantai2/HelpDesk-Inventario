@@ -1,0 +1,42 @@
+<div class="crud-container">
+  <h2>Gestión de Estados</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">Agregar Estado</button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+    <input [(ngModel)]="estadoEnModal.nombre" [readonly]="modalModo === 'ver'" placeholder="Descripción" />
+  </app-modal-form>
+
+  <hr />
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let estado of estados">
+      <td>{{ estado.nombre }}</td>
+      <td>
+        <button class="btn btn-info btn-sm" (click)="abrirVer(estado)">Ver</button>
+        <button class="btn btn-warning btn-sm" (click)="abrirEditar(estado)">Editar</button>
+        <button class="btn btn-danger btn-sm" (click)="eliminaEstado(estado.idEstado)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>
+

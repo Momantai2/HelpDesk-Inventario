@@ -1,0 +1,24 @@
+<div class="sidebar">
+  <h2>HelpDesk</h2>
+
+  <a routerLink="/home" routerLinkActive="active">
+    <i class="fas fa-home"></i> Inicio
+  </a>
+
+  <a *ngIf="isAdmin()" (click)="toggleSubmenu()">
+    <i class="fas fa-cogs"></i> Mantenimiento ▾
+  </a>
+
+  <div class="submenu" *ngIf="showSubmenu">
+    <a routerLink="/ticket" routerLinkActive="active">🚻 ticket</a>
+    <a routerLink="/comentario" routerLinkActive="active">🔑 comentario</a>
+    <a routerLink="/estado" routerLinkActive="active">🧑‍💻 estado</a>
+    <a routerLink="/prioridad" routerLinkActive="active">⚖️ prioridad</a>
+    <a routerLink="/rol" routerLinkActive="active">🏷️ rol</a>
+    <a routerLink="/usuario" routerLinkActive="active">🏷️ usuario</a>
+  </div>
+
+  <a *ngIf="isLoggedIn" (click)="logout()">
+    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+  </a>
+</div>

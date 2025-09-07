@@ -1,0 +1,13 @@
+<app-header (toggleSidebar)="toggleSidebar()"></app-header>
+
+<div class="content-wrapper">
+  <app-dashboard
+    [class.collapsed]="!isSidebarOpen"
+    (mouseLeave)="isSidebarOpen = false"
+  ></app-dashboard>
+
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+

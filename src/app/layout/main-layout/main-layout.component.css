@@ -1,0 +1,60 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+app-header {
+  flex-shrink: 0;
+  height: 60px;
+}
+
+/* Wrapper que contiene sidebar + main content */
+.content-wrapper {
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+  align-items: stretch;
+}
+
+/* Sidebar */
+app-dashboard {
+  flex-shrink: 0;
+  width: 240px;
+  background-color:rgb(46, 45, 45);
+  transition: width 0.3s ease;
+  overflow: hidden;
+  z-index: 999;
+  align-self: stretch;
+}
+
+app-dashboard.collapsed {
+  width: 0;
+}
+
+/* Contenedor principal del contenido */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Donde está el router outlet */
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 16px;
+}
+
+/* Footer separado */
+.footer-wrapper {
+  height: 60px;
+  flex-shrink: 0;
+}
+
+app-footer {
+  height: 100%;
+  text-align: center;
+}

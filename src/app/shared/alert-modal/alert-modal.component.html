@@ -1,0 +1,19 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal">
+    <div class="modal-header">
+      <h5>{{ title }}</h5>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <p>{{ message }}</p>
+      <ul *ngIf="details.length > 0">
+        <li *ngFor="let detail of details">{{ detail }}</li>
+      </ul>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="close()">Aceptar</button>
+    </div>
+  </div>
+</div>
