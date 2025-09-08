@@ -1,12 +1,17 @@
-import { Estado } from "./estado.model";
-import { Prioridad } from "./prioridad.model";
-import { Usuario } from "./usuario.model";
+import { UsuarioResponseDTO } from './usuario.model';
 
-export interface Ticket {
+export interface TicketResponseDTO {
   idTicket: number;
   titulo?: string;
   descripcion: string;
-  estado?: Estado;
-  prioridad?: Prioridad;
-  usuario?: Usuario;
+  idEstado: number;
+  idPrioridad: number;
+  usuario: UsuarioResponseDTO;
+}
+export interface TicketRequestDTO {
+  titulo?: string;
+  descripcion: string;
+  idEstado: number;
+  idPrioridad: number;
+  idUsuario: number;
 }

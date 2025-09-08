@@ -1,4 +1,7 @@
-export interface Rol {
+export interface RolRequestDTO {
+  nombre?: string;
+}
+export interface RolResponseDTO {
   idRol: number;
-  nombre: string;
+  nombre?: string;
 }

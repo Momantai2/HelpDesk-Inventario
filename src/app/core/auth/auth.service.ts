@@ -3,13 +3,13 @@ import { environment } from '../environment/environment';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { JwtResponse } from './jwt.response.model';
-import { Usuario } from '../../model/usuario.model';
+import { UsuarioResponseDTO } from '../../model/usuario.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-   private apiUrl = `${environment.apispirngUrl}/auth`;
+  private apiUrl = `${environment.apispirngUrl}/auth`;
 
   // Estado login y username
   private loggedIn = new BehaviorSubject<boolean>(
@@ -28,7 +28,9 @@ export class AuthService {
   rol$ = this.rol.asObservable();
 
   private idUsuario = new BehaviorSubject<number | null>(
-    localStorage.getItem('idUsuario') ? Number(localStorage.getItem('idUsuario')) : null
+    localStorage.getItem('idUsuario')
+      ? Number(localStorage.getItem('idUsuario'))
+      : null
   );
   idUsuario$ = this.idUsuario.asObservable();
 
@@ -42,7 +44,7 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           localStorage.setItem('username', email);
           localStorage.setItem('idRol', res.rol.toString());
-          localStorage.setItem('idUsuario', res.idUsuario.toString());  // Guardamos idUsuario
+          localStorage.setItem('idUsuario', res.idUsuario.toString()); // Guardamos idUsuario
 
           this.loggedIn.next(true);
           this.username.next(email);
@@ -73,7 +75,7 @@ export class AuthService {
     return rol ? Number(rol) : null;
   }
 
-  getCurrentUsuario(): Usuario | null {
+  getCurrentUsuario(): UsuarioResponseDTO | null {
     const idUsuarioStr = localStorage.getItem('idUsuario');
     const email = localStorage.getItem('username');
     const rolNum = localStorage.getItem('idRol');
@@ -81,7 +83,8 @@ export class AuthService {
       return {
         idUsuario: Number(idUsuarioStr),
         email: email,
-        rol: { idRol: Number(rolNum), nombre: '' }  // puedes ajustar si tienes nombre del rol
+        idRol: Number(rolNum),
+        nombre: '',
       };
     }
     return null;

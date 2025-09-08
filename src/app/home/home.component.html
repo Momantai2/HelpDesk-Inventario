@@ -4,12 +4,18 @@
   <p *ngIf="rol !== 1">Aquí están tus tickets generados.</p>
 
   <div class="tickets-grid" *ngIf="tickets.length > 0; else sinTickets">
-    <div class="ticket-card" *ngFor="let ticket of tickets" (click)="openTicket(ticket)">
+    <div
+      class="ticket-card"
+      *ngFor="let ticket of tickets"
+      (click)="openTicket(ticket)"
+    >
       <h3>{{ ticket.titulo }}</h3>
       <p><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
-      <p><strong>Estado:</strong> {{ ticket.estado?.nombre }}</p>
-      <p><strong>Prioridad:</strong> {{ ticket.prioridad?.nombre }}</p>
-      <p *ngIf="rol === 1"><strong>Usuario:</strong> {{ ticket.usuario?.nombre }}</p>
+      <p><strong>Estado:</strong> {{ ticket.idEstado }}</p>
+      <p><strong>Prioridad:</strong> {{ ticket.idPrioridad }}</p>
+      <p *ngIf="rol === 1">
+        <strong>Usuario:</strong> {{ ticket.usuario.nombre }}
+      </p>
     </div>
   </div>
 
@@ -17,12 +23,13 @@
     <p>No hay tickets disponibles.</p>
   </ng-template>
 
-  <button class="btn btn-outline-dark salir-btn" (click)="cerrarSesion()">🚪 Cerrar Sesión</button>
+  <button class="btn btn-outline-dark salir-btn" (click)="cerrarSesion()">
+    🚪 Cerrar Sesión
+  </button>
 </div>
 
-
 <app-modalHome *ngIf="selectedTicket" (closed)="closeModal()">
-   <div modal-header>
+  <div modal-header>
     <h2>{{ selectedTicket.titulo }}</h2>
   </div>
   <div modal-body>

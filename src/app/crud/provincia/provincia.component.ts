@@ -7,27 +7,26 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.
 import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
 import { ErrorHandlerService } from '../../core/error/errorhandler.service';
 import {
-  UsuarioRequestDTO,
-  UsuarioResponseDTO,
-} from '../../model/usuario.model';
-import { RolResponseDTO } from '../../model/rol.model';
+  ProvinciaRequest,
+  ProvinciaResponse,
+} from '../../model/inventario/provincia.model';
+
 @Component({
-  selector: 'app-usuario',
+  selector: 'app-provincia',
   imports: [
     FormsModule,
     NgFor,
     ModalFormComponent,
     ConfirmModalComponent,
     AlertModalComponent,
+    NgIf,
   ],
-  templateUrl: './usuario.component.html',
-  styleUrls: ['../crud.component.css'], // sube una carpeta para llegar a "crud" donde está el CSS
+  templateUrl: './provincia.component.html',
+  styleUrls: ['../crud.component.css'],
 })
-export class UsuarioComponent {
-  usuarios: UsuarioResponseDTO[] = [];
-  roles: RolResponseDTO[] = []; // ← lista de roles
-
-  usuarioEnModal: Partial<UsuarioRequestDTO & { idUsuario?: number }> = {};
+export class ProvinciaComponent implements OnInit {
+  provincias: ProvinciaResponse[] = [];
+  provinciaEnModal: Partial<ProvinciaRequest & ProvinciaResponse> = {};
   modalModo: 'crear' | 'editar' | 'ver' = 'crear';
   modalTitulo = '';
 
@@ -36,30 +35,17 @@ export class UsuarioComponent {
   @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
 
   constructor(
-    private crudService: CrudService<UsuarioResponseDTO, UsuarioRequestDTO>,
-    private rolService: CrudService<RolResponseDTO>, // ← nuevo servicio para roles
-
+    private crudService: CrudService<ProvinciaResponse>,
     private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
-    this.getUsuarios();
-    this.getRoles();
+    this.getProvincias();
   }
 
-  getUsuarios(): void {
-    this.crudService.getAll('usuarios').subscribe({
-      next: (data) => (this.usuarios = data),
-      error: (error) => {
-        const err = this.errorHandler.getErrorData(error);
-        this.alertModal.open(err.title, err.message, err.details);
-      },
-    });
-  }
-
-  getRoles(): void {
-    this.rolService.getAll('roles').subscribe({
-      next: (data) => (this.roles = data),
+  getProvincias(): void {
+    this.crudService.getAll('provincias').subscribe({
+      next: (data) => (this.provincias = data),
       error: (error) => {
         const err = this.errorHandler.getErrorData(error);
         this.alertModal.open(err.title, err.message, err.details);
@@ -69,46 +55,43 @@ export class UsuarioComponent {
 
   abrirCrear(): void {
     this.modalModo = 'crear';
-    this.modalTitulo = 'Crear Usuario';
-    this.usuarioEnModal = {};
+    this.modalTitulo = 'Crear Provincia';
+    this.provinciaEnModal = {};
     this.modalComponent.open();
   }
 
-  abrirEditar(usuario: UsuarioResponseDTO): void {
+  abrirEditar(provincia: ProvinciaResponse): void {
     this.modalModo = 'editar';
-    this.modalTitulo = 'Editar Usuario';
-    this.usuarioEnModal = { ...usuario };
+    this.modalTitulo = 'Editar Provincia';
+    this.provinciaEnModal = { ...provincia };
     this.modalComponent.open();
   }
 
-  abrirVer(usuario: UsuarioResponseDTO): void {
+  abrirVer(provincia: ProvinciaResponse): void {
     this.modalModo = 'ver';
-    this.modalTitulo = 'Detalle del Usuario';
-    this.usuarioEnModal = { ...usuario };
+    this.modalTitulo = 'Detalle de Provincia';
+    this.provinciaEnModal = { ...provincia };
     this.modalComponent.open();
   }
 
   cancelarModal(): void {
-    this.usuarioEnModal = {};
+    this.provinciaEnModal = {};
   }
-  confirmarAccionModal(): void {
-    const usuarioRequest: UsuarioRequestDTO = {
-      nombre: this.usuarioEnModal.nombre,
-      email: this.usuarioEnModal.email!,
-      idRol: this.usuarioEnModal.idRol!,
-      ...(this.usuarioEnModal.password
-        ? { password: this.usuarioEnModal.password }
-        : {}),
-    };
 
+  confirmarAccionModal(): void {
     if (this.modalModo === 'crear') {
-      this.crudService.create('usuarios', usuarioRequest).subscribe({
+      const payload: ProvinciaRequest = {
+        nombre: this.provinciaEnModal.nombre!,
+        idDepartamento: this.provinciaEnModal.idDepartamento!,
+      };
+
+      this.crudService.create('provincias', payload).subscribe({
         next: () => {
-          this.getUsuarios();
+          this.getProvincias();
           this.modalComponent.close();
           this.alertModal.open(
             'Creado',
-            'El Usuario ha sido creado exitosamente.'
+            'La provincia ha sido creada exitosamente.'
           );
         },
         error: (error) => {
@@ -119,15 +102,20 @@ export class UsuarioComponent {
     }
 
     if (this.modalModo === 'editar') {
+      const payload: ProvinciaRequest = {
+        nombre: this.provinciaEnModal.nombre!,
+        idDepartamento: this.provinciaEnModal.idDepartamento!,
+      };
+
       this.crudService
-        .update('usuarios', this.usuarioEnModal.idUsuario!, usuarioRequest)
+        .update('provincias', this.provinciaEnModal.id!, payload)
         .subscribe({
           next: () => {
-            this.getUsuarios();
+            this.getProvincias();
             this.modalComponent.close();
             this.alertModal.open(
               'Actualizado',
-              'El Usuario ha sido actualizado correctamente.'
+              'La provincia ha sido actualizada correctamente.'
             );
           },
           error: (error) => {
@@ -137,20 +125,20 @@ export class UsuarioComponent {
         });
     }
 
-    this.usuarioEnModal = {};
+    this.provinciaEnModal = {};
   }
 
-  eliminarUsuario(id: number): void {
+  eliminarProvincia(id: number): void {
     this.confirmModal
-      .open('¿Estás seguro de que deseas eliminar este Usuario?', 'eliminar')
+      .open('¿Estás seguro de que deseas eliminar esta provincia?', 'eliminar')
       .then((confirmado) => {
         if (confirmado) {
-          this.crudService.delete('usuarios', id).subscribe({
+          this.crudService.delete('provincias', id).subscribe({
             next: () => {
-              this.getUsuarios();
+              this.getProvincias();
               this.alertModal.open(
                 'Eliminado',
-                'El Usuario ha sido eliminado correctamente.'
+                'La provincia ha sido eliminada correctamente.'
               );
             },
             error: (error) => {

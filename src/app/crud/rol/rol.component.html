@@ -11,32 +11,43 @@
     (onSave)="confirmarAccionModal()"
     (onClose)="cancelarModal()"
   >
-    <input [(ngModel)]="rolEnModal.nombre" [readonly]="modalModo === 'ver'" placeholder="Descripción" />
+    <input
+      [(ngModel)]="rolEnModal.nombre"
+      [readonly]="modalModo === 'ver'"
+      placeholder="Descripción"
+    />
   </app-modal-form>
 
   <hr />
 
   <table>
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let rol of roles">
-      <td>{{ rol.nombre }}</td>
-      <td>
-        <button class="btn btn-info btn-sm" (click)="abrirVer(rol)">Ver</button>
-        <button class="btn btn-warning btn-sm" (click)="abrirEditar(rol)">Editar</button>
-        <button class="btn btn-danger btn-sm" (click)="eliminarRol(rol.idRol)">Eliminar</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rol of roles">
+        <td>{{ rol.nombre }}</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="abrirVer(rol)">
+            Ver
+          </button>
+          <button class="btn btn-warning btn-sm" (click)="abrirEditar(rol)">
+            Editar
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="eliminarRol(rol.idRol)"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <app-confirm-modal #confirmModal></app-confirm-modal>
 <app-alert-modal #alertModal></app-alert-modal>
-

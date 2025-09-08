@@ -2,22 +2,30 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CrudService } from '../crud.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
-import { ModalFormComponent } from "../../shared/modal-form/modal-form.component";
-import { ConfirmModalComponent } from "../../shared/confirm-modal/confirm-modal.component";
+import { ModalFormComponent } from '../../shared/modal-form/modal-form.component';
+import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
 import { ErrorHandlerService } from '../../core/error/errorhandler.service';
-import { Prioridad } from '../../model/prioridad.model';
+import {
+  PrioridadRequestDTO,
+  PrioridadResponseDTO,
+} from '../../model/prioridad.model';
 
 @Component({
   selector: 'app-prioridad',
-  imports: [FormsModule, NgFor, ModalFormComponent, ConfirmModalComponent, AlertModalComponent],
+  imports: [
+    FormsModule,
+    NgFor,
+    ModalFormComponent,
+    ConfirmModalComponent,
+    AlertModalComponent,
+  ],
   templateUrl: './prioridad.component.html',
-  styleUrls: ['../crud.component.css']  // sube una carpeta para llegar a "crud" donde está el CSS
+  styleUrls: ['../crud.component.css'], // sube una carpeta para llegar a "crud" donde está el CSS
 })
 export class PrioridadComponent implements OnInit {
- 
-  prioridades: Prioridad[] = [];
-  prioridadEnModal: Partial<Prioridad> = {};
+  prioridades: PrioridadResponseDTO[] = [];
+  prioridadEnModal: Partial<PrioridadResponseDTO> = {};
   modalModo: 'crear' | 'editar' | 'ver' = 'crear';
   modalTitulo = '';
 
@@ -26,7 +34,7 @@ export class PrioridadComponent implements OnInit {
   @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
 
   constructor(
-    private crudService: CrudService<Prioridad>,
+    private crudService: CrudService<PrioridadResponseDTO, PrioridadRequestDTO>,
     private errorHandler: ErrorHandlerService
   ) {}
 
@@ -36,11 +44,11 @@ export class PrioridadComponent implements OnInit {
 
   getPrioridades(): void {
     this.crudService.getAll('prioridades').subscribe({
-      next: (data) => this.prioridades = data,
+      next: (data) => (this.prioridades = data),
       error: (error) => {
         const err = this.errorHandler.getErrorData(error);
         this.alertModal.open(err.title, err.message, err.details);
-      }
+      },
     });
   }
 
@@ -51,14 +59,14 @@ export class PrioridadComponent implements OnInit {
     this.modalComponent.open();
   }
 
-  abrirEditar(prioridad: Prioridad): void {
+  abrirEditar(prioridad: PrioridadResponseDTO): void {
     this.modalModo = 'editar';
     this.modalTitulo = 'Editar Prioridades';
     this.prioridadEnModal = { ...prioridad };
     this.modalComponent.open();
   }
 
-  abrirVer(prioridad: Prioridad): void {
+  abrirVer(prioridad: PrioridadResponseDTO): void {
     this.modalModo = 'ver';
     this.modalTitulo = 'Detalle de la Prioridad';
     this.prioridadEnModal = { ...prioridad };
@@ -71,31 +79,45 @@ export class PrioridadComponent implements OnInit {
 
   confirmarAccionModal(): void {
     if (this.modalModo === 'crear') {
-      this.crudService.create('prioridades', this.prioridadEnModal as Prioridad).subscribe({
-        next: () => {
-          this.getPrioridades();
-          this.modalComponent.close();
-          this.alertModal.open('Creado', 'La prioridad ha sido creado exitosamente.');
-        },
-        error: (error) => {
-          const err = this.errorHandler.getErrorData(error);
-          this.alertModal.open(err.title, err.message, err.details);
-        }
-      });
+      this.crudService
+        .create('prioridades', this.prioridadEnModal as PrioridadRequestDTO)
+        .subscribe({
+          next: () => {
+            this.getPrioridades();
+            this.modalComponent.close();
+            this.alertModal.open(
+              'Creado',
+              'La prioridad ha sido creado exitosamente.'
+            );
+          },
+          error: (error) => {
+            const err = this.errorHandler.getErrorData(error);
+            this.alertModal.open(err.title, err.message, err.details);
+          },
+        });
     }
 
     if (this.modalModo === 'editar') {
-      this.crudService.update('prioridades', this.prioridadEnModal.idPrioridad!, this.prioridadEnModal as Prioridad).subscribe({
-        next: () => {
-          this.getPrioridades();
-          this.modalComponent.close();
-          this.alertModal.open('Actualizado', 'La Prioridad ha sido actualizado correctamente.');
-        },
-        error: (error) => {
-          const err = this.errorHandler.getErrorData(error);
-          this.alertModal.open(err.title, err.message, err.details);
-        }
-      });
+      this.crudService
+        .update(
+          'prioridades',
+          this.prioridadEnModal.idPrioridad!,
+          this.prioridadEnModal as PrioridadRequestDTO
+        )
+        .subscribe({
+          next: () => {
+            this.getPrioridades();
+            this.modalComponent.close();
+            this.alertModal.open(
+              'Actualizado',
+              'La Prioridad ha sido actualizado correctamente.'
+            );
+          },
+          error: (error) => {
+            const err = this.errorHandler.getErrorData(error);
+            this.alertModal.open(err.title, err.message, err.details);
+          },
+        });
     }
 
     this.prioridadEnModal = {};
@@ -109,12 +131,15 @@ export class PrioridadComponent implements OnInit {
           this.crudService.delete('prioridades', id).subscribe({
             next: () => {
               this.getPrioridades();
-              this.alertModal.open('Eliminado', 'La prioridad ha sido eliminado correctamente.');
+              this.alertModal.open(
+                'Eliminado',
+                'La prioridad ha sido eliminado correctamente.'
+              );
             },
             error: (error) => {
               const err = this.errorHandler.getErrorData(error);
               this.alertModal.open(err.title, err.message, err.details);
-            }
+            },
           });
         }
       });

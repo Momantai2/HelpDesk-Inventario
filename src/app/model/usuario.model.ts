@@ -1,9 +1,14 @@
-import { Rol } from "./rol.model";
-
-export interface Usuario {
+export interface UsuarioResponseDTO {
   idUsuario: number;
   nombre?: string;
   email: string;
   password?: string;
-  rol : Rol;
+  idRol: number;
+}
+
+export interface UsuarioRequestDTO {
+  nombre?: string;
+  email: string;
+  password?: string;
+  idRol: number;
 }

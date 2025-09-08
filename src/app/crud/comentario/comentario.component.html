@@ -1,67 +1,92 @@
-<!-- Vista estilo “publicación” si hay un ticketId -->
 <div *ngIf="ticketId != null; else crudTable" class="comments-style">
-      <div *ngFor="let c of comentarios" class="comment-card">
-        <div class="comment-header">
-          <div class="comment-avatar">👤</div>
-          <div class="comment-info">
-            <p class="comment-author">{{ c.usuario.nombre }}</p>
-            <p class="comment-date">{{ c.fechaCreacion | date:'medium' }}</p>
-          </div>
-        </div>
-        <p class="comment-text">{{ c.texto }}</p>
-      </div>
-
-      <div class="new-comment">
-        <textarea [(ngModel)]="comentarioTexto" placeholder="Escribe un comentario..."></textarea>
-        <button (click)="crearComentario()">Enviar</button>
+  <div *ngFor="let c of comentarios" class="comment-card">
+    <div class="comment-header">
+      <div class="comment-avatar">👤</div>
+      <div class="comment-info">
+        <p class="comment-author">{{ c.usuarioNombre }}</p>
+        <p class="comment-date">{{ c.fechaCreacion | date : "medium" }}</p>
       </div>
     </div>
-<ng-template #crudTable>
-
-<div class="crud-container">
-  <h2>Gestión de Comentarios</h2>
-
-  <button class="btn btn-primary" (click)="abrirCrear()">Agregar Comentario</button>
-
-  <app-modal-form
-    #modal
-    [title]="modalTitulo"
-    [hideSave]="modalModo === 'ver'"
-    [readonly]="modalModo === 'ver'"
-    (onSave)="confirmarAccionModal()"
-    (onClose)="cancelarModal()"
-  >
-<input [(ngModel)]="comentarioEnModal.texto" [readonly]="modalModo === 'ver'" placeholder="Descripción" />
-
-  </app-modal-form>
-
-  <hr />
-<table>
-<thead>
-<tr>
-<th>Texto</th>
-<th>Nro.Ticket</th>
-<th> Usuario</th>
-<th>Acciones</th>
-</tr>
-</thead>
-<tbody>
-<tr *ngFor="let comentario of comentarios">
-<td>{{ comentario.texto }}</td>
-<!-- Se utiliza el operador de navegación segura ?. para acceder a las propiedades -->
-<td>{{ comentario.ticket.idTicket }}</td>
-<td>{{ comentario.usuario.nombre }}</td>
-<td>
-<button class="btn btn-info btn-sm" (click)="abrirVer(comentario)">Ver</button>
-<button class="btn btn-warning btn-sm" (click)="abrirEditar(comentario)">Editar</button>
-<!-- Se agrega el botón para eliminar -->
-<button class="btn btn-danger btn-sm" (click)="eliminarComentario(comentario.idComentario!)">Eliminar</button>
-</td>
-</tr>
-</tbody>
-</table>
-
+    <p class="comment-text">{{ c.texto }}</p>
+  </div>
+  <div class="new-comment">
+    <textarea
+      [(ngModel)]="comentarioTexto"
+      placeholder="Escribe un comentario..."
+    ></textarea>
+    <button (click)="crearComentario()">Enviar</button>
+  </div>
 </div>
+
+<ng-template #crudTable>
+  <div class="crud-container">
+    <h2>Gestión de Comentarios</h2>
+    <button class="btn btn-primary" (click)="abrirCrear()">
+      Agregar Comentario
+    </button>
+
+    <app-modal-form
+      #modal
+      [title]="modalTitulo"
+      [hideSave]="modalModo === 'ver'"
+      [readonly]="modalModo === 'ver'"
+      (onSave)="confirmarAccionModal()"
+      (onClose)="cancelarModal()"
+    >
+      <input
+        [(ngModel)]="comentarioEnModal.texto"
+        [readonly]="modalModo === 'ver'"
+        placeholder="Descripción"
+      />
+
+      <label for="ticket-select">Ticket:</label>
+      <select
+        id="ticket-select"
+        [(ngModel)]="comentarioEnModal.idTicket"
+        [disabled]="modalModo === 'ver'"
+      >
+        <option *ngFor="let ticket of tickets" [value]="ticket.idTicket">
+          {{ ticket.idTicket }}
+        </option>
+      </select>
+    </app-modal-form>
+
+    <hr />
+    <table>
+      <thead>
+        <tr>
+          <th>Texto</th>
+          <th>Nro. Ticket</th>
+          <th>Usuario</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let comentario of comentarios">
+          <td>{{ comentario.texto }}</td>
+          <td>{{ comentario.idTicket }}</td>
+          <td>{{ comentario.usuarioNombre }}</td>
+          <td>
+            <button class="btn btn-info btn-sm" (click)="abrirVer(comentario)">
+              Ver
+            </button>
+            <button
+              class="btn btn-warning btn-sm"
+              (click)="abrirEditar(comentario)"
+            >
+              Editar
+            </button>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="eliminarComentario(comentario.idComentario!)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </ng-template>
 
 <app-confirm-modal #confirmModal></app-confirm-modal>

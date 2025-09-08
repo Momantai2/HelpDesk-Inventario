@@ -4,27 +4,27 @@ import { Observable } from 'rxjs';
 import { environment } from '../core/environment/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class CrudService <T>{
+export class CrudService<TResponse, TRequest = TResponse> {
   constructor(private http: HttpClient) {}
 
   private apiUrl = `${environment.apispirngUrl}`;
 
-  getAll(endpoint: string): Observable<T[]> {
-    return this.http.get<T[]>(`${this.apiUrl}/${endpoint}`);
+  getAll(endpoint: string): Observable<TResponse[]> {
+    return this.http.get<TResponse[]>(`${this.apiUrl}/${endpoint}`);
   }
 
-  getById(endpoint: string, id: number): Observable<T> {
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}/${id}`);
+  getById(endpoint: string, id: number): Observable<TResponse> {
+    return this.http.get<TResponse>(`${this.apiUrl}/${endpoint}/${id}`);
   }
 
-  create(endpoint: string, data: T): Observable<T> {
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data);
+  create(endpoint: string, data: TRequest): Observable<TResponse> {
+    return this.http.post<TResponse>(`${this.apiUrl}/${endpoint}`, data);
   }
 
-  update(endpoint: string, id: number, data: T): Observable<T> {
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}/${id}`, data);
+  update(endpoint: string, id: number, data: TRequest): Observable<TResponse> {
+    return this.http.put<TResponse>(`${this.apiUrl}/${endpoint}/${id}`, data);
   }
 
   delete(endpoint: string, id: number): Observable<void> {
