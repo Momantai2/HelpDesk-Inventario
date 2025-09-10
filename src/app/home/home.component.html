@@ -11,8 +11,8 @@
     >
       <h3>{{ ticket.titulo }}</h3>
       <p><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
-      <p><strong>Estado:</strong> {{ ticket.idEstado }}</p>
-      <p><strong>Prioridad:</strong> {{ ticket.idPrioridad }}</p>
+      <p><strong>Estado:</strong> {{ ticket.estado.nombre }}</p>
+      <p><strong>Prioridad:</strong> {{ ticket.prioridad.nombre }}</p>
       <p *ngIf="rol === 1">
         <strong>Usuario:</strong> {{ ticket.usuario.nombre }}
       </p>

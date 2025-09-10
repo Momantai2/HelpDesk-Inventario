@@ -6,10 +6,10 @@ import { ModalFormComponent } from '../../shared/modal-form/modal-form.component
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
 import { ErrorHandlerService } from '../../core/error/errorhandler.service';
-import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventario/provinciamodel';
+import { TipoSucursalRequestDTO, TipoSucursalResponseDTO } from '../../model/inventario/tipoSucursal.model';
 
 @Component({
-  selector: 'app-provincia',
+  selector: 'app-tiposucursal',
   imports: [
     FormsModule,
     NgFor,
@@ -17,12 +17,12 @@ import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventari
     ConfirmModalComponent,
     AlertModalComponent,
   ],
-  templateUrl: './provincia.component.html',
+  templateUrl: './tiposucursal.component.html',
   styleUrls: ['../crud.component.css'], // sube una carpeta para llegar a "crud" donde está el CSS
 })
-export class ProvinciaComponent implements OnInit {
-  provincias: ProvinciaResponseDTO[] = [];
-  provinciaEnModal: Partial<ProvinciaResponseDTO> = {};
+export class TipoSucursalComponent implements OnInit {
+  tiposucursales: TipoSucursalResponseDTO[] = [];
+  tiposucursalEnModal: Partial<TipoSucursalResponseDTO> = {};
   modalModo: 'crear' | 'editar' | 'ver' = 'crear';
   modalTitulo = '';
 
@@ -31,17 +31,17 @@ export class ProvinciaComponent implements OnInit {
   @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
 
   constructor(
-    private crudService: CrudService<ProvinciaResponseDTO, ProvinciaRequestDTO>,
+    private crudService: CrudService<TipoSucursalResponseDTO, TipoSucursalRequestDTO>,
     private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
-    this.getProvincias();
+    this.getTipoSucursales();
   }
 
-  getProvincias(): void {
-    this.crudService.getAll('provincias').subscribe({
-      next: (data) => (this.provincias = data),
+  getTipoSucursales(): void {
+    this.crudService.getAll('tipos-sucursal').subscribe({
+      next: (data) => (this.tiposucursales = data),
       error: (error) => {
         const err = this.errorHandler.getErrorData(error);
         this.alertModal.open(err.title, err.message, err.details);
@@ -51,40 +51,40 @@ export class ProvinciaComponent implements OnInit {
 
   abrirCrear(): void {
     this.modalModo = 'crear';
-    this.modalTitulo = 'Crear Provincia';
-    this.provinciaEnModal = {};
+    this.modalTitulo = 'Crear tipos-sucursal';
+    this.tiposucursalEnModal = {};
     this.modalComponent.open();
   }
 
-  abrirEditar(provincia: ProvinciaResponseDTO): void {
+  abrirEditar(tiposucursal: TipoSucursalResponseDTO): void {
     this.modalModo = 'editar';
-    this.modalTitulo = 'Editar Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Editar TipoSucursal';
+    this.tiposucursalEnModal = { ...tiposucursal };
     this.modalComponent.open();
   }
 
-  abrirVer(provincia: ProvinciaResponseDTO): void {
+  abrirVer(tiposucursal: TipoSucursalResponseDTO): void {
     this.modalModo = 'ver';
-    this.modalTitulo = 'Detalle del Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Detalle del TipoSucursal';
+    this.tiposucursalEnModal = { ...tiposucursal };
     this.modalComponent.open();
   }
 
   cancelarModal(): void {
-    this.provinciaEnModal = {};
+    this.tiposucursalEnModal = {};
   }
 
   confirmarAccionModal(): void {
     if (this.modalModo === 'crear') {
       this.crudService
-        .create('provincias', this.provinciaEnModal as ProvinciaRequestDTO)
+        .create('tipos-sucursal', this.tiposucursalEnModal as TipoSucursalRequestDTO)
         .subscribe({
           next: () => {
-            this.getProvincias();
+            this.getTipoSucursales();
             this.modalComponent.close();
             this.alertModal.open(
               'Creado',
-              'El provincia ha sido creado exitosamente.'
+              'El tiposucursal ha sido creado exitosamente.'
             );
           },
           error: (error) => {
@@ -97,17 +97,17 @@ export class ProvinciaComponent implements OnInit {
     if (this.modalModo === 'editar') {
       this.crudService
         .update(
-          'provincias',
-          this.provinciaEnModal.idProvincia!,
-          this.provinciaEnModal as ProvinciaRequestDTO
+          'tipos-sucursal',
+          this.tiposucursalEnModal.idTipoSucursal!,
+          this.tiposucursalEnModal as TipoSucursalRequestDTO
         )
         .subscribe({
           next: () => {
-            this.getProvincias();
+            this.getTipoSucursales();
             this.modalComponent.close();
             this.alertModal.open(
               'Actualizado',
-              'El provincia ha sido actualizado correctamente.'
+              'El tiposucursal ha sido actualizado correctamente.'
             );
           },
           error: (error) => {
@@ -117,20 +117,20 @@ export class ProvinciaComponent implements OnInit {
         });
     }
 
-    this.provinciaEnModal = {};
+    this.tiposucursalEnModal = {};
   }
 
-  eliminaProvincia(id: number): void {
+  eliminaTipoSucursal(id: number): void {
     this.confirmModal
-      .open('¿Estás seguro de que deseas eliminar este provincia?', 'eliminar')
+      .open('¿Estás seguro de que deseas eliminar este tiposucursal?', 'eliminar')
       .then((confirmado) => {
         if (confirmado) {
-          this.crudService.delete('provincias', id).subscribe({
+          this.crudService.delete('tipos-sucursal', id).subscribe({
             next: () => {
-              this.getProvincias();
+              this.getTipoSucursales();
               this.alertModal.open(
                 'Eliminado',
-                'El provincia ha sido eliminado correctamente.'
+                'El tiposucursal ha sido eliminado correctamente.'
               );
             },
             error: (error) => {

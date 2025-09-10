@@ -83,7 +83,7 @@ export class AuthService {
       return {
         idUsuario: Number(idUsuarioStr),
         email: email,
-        idRol: Number(rolNum),
+        rol: { idRol: Number(rolNum) },
         nombre: '',
       };
     }

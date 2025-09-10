@@ -54,8 +54,8 @@
       <tr *ngFor="let ticket of tickets">
         <td>{{ ticket.descripcion }}</td>
         <td>{{ ticket.titulo }}</td>
-        <td>{{ ticket.idEstado }}</td>
-        <td>{{ ticket.idPrioridad }}</td>
+        <td>{{ ticket.estado.nombre }}</td>
+        <td>{{ ticket.prioridad.nombre }}</td>
         <td>{{ ticket.usuario.nombre }}</td>
 
         <td>

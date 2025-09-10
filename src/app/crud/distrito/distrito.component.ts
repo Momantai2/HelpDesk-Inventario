@@ -6,10 +6,11 @@ import { ModalFormComponent } from '../../shared/modal-form/modal-form.component
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
 import { ErrorHandlerService } from '../../core/error/errorhandler.service';
-import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventario/provinciamodel';
 
+import { DistritoRequestDTO, DistritoResponseDTO } from '../../model/inventario/distrito.model';
+import { ProvinciaResponseDTO } from '../../model/inventario/provinciamodel';
 @Component({
-  selector: 'app-provincia',
+  selector: 'app-distrito',
   imports: [
     FormsModule,
     NgFor,
@@ -17,12 +18,14 @@ import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventari
     ConfirmModalComponent,
     AlertModalComponent,
   ],
-  templateUrl: './provincia.component.html',
+  templateUrl: './distrito.component.html',
   styleUrls: ['../crud.component.css'], // sube una carpeta para llegar a "crud" donde está el CSS
 })
-export class ProvinciaComponent implements OnInit {
-  provincias: ProvinciaResponseDTO[] = [];
-  provinciaEnModal: Partial<ProvinciaResponseDTO> = {};
+export class DistritoComponent {
+  distritos: DistritoResponseDTO[] = [];
+  provincias: ProvinciaResponseDTO[] = []; // ← lista de provincias
+
+  distritoEnModal: Partial<DistritoRequestDTO & { idDistrito?: number }> = {};
   modalModo: 'crear' | 'editar' | 'ver' = 'crear';
   modalTitulo = '';
 
@@ -31,16 +34,29 @@ export class ProvinciaComponent implements OnInit {
   @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
 
   constructor(
-    private crudService: CrudService<ProvinciaResponseDTO, ProvinciaRequestDTO>,
+    private crudService: CrudService<DistritoResponseDTO , DistritoRequestDTO>,
+    private provinciaService: CrudService<ProvinciaResponseDTO>, // ← nuevo servicio para provincias
+
     private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
+    this.getDistritos();
     this.getProvincias();
   }
 
+  getDistritos(): void {
+    this.crudService.getAll('distritos').subscribe({
+      next: (data) => (this.distritos = data),
+      error: (error) => {
+        const err = this.errorHandler.getErrorData(error);
+        this.alertModal.open(err.title, err.message, err.details);
+      },
+    });
+  }
+
   getProvincias(): void {
-    this.crudService.getAll('provincias').subscribe({
+    this.provinciaService.getAll('provincias').subscribe({
       next: (data) => (this.provincias = data),
       error: (error) => {
         const err = this.errorHandler.getErrorData(error);
@@ -51,63 +67,62 @@ export class ProvinciaComponent implements OnInit {
 
   abrirCrear(): void {
     this.modalModo = 'crear';
-    this.modalTitulo = 'Crear Provincia';
-    this.provinciaEnModal = {};
+    this.modalTitulo = 'Crear Distrito';
+    this.distritoEnModal = {};
     this.modalComponent.open();
   }
 
-  abrirEditar(provincia: ProvinciaResponseDTO): void {
+  abrirEditar(distrito: DistritoResponseDTO): void {
     this.modalModo = 'editar';
-    this.modalTitulo = 'Editar Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Editar Distrito';
+    this.distritoEnModal = { ...distrito };
     this.modalComponent.open();
   }
 
-  abrirVer(provincia: ProvinciaResponseDTO): void {
+  abrirVer(distrito: DistritoResponseDTO): void {
     this.modalModo = 'ver';
-    this.modalTitulo = 'Detalle del Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Detalle del Distrito';
+    this.distritoEnModal = { ...distrito };
     this.modalComponent.open();
   }
 
   cancelarModal(): void {
-    this.provinciaEnModal = {};
+    this.distritoEnModal = {};
   }
-
   confirmarAccionModal(): void {
+    const distritoRequest: DistritoRequestDTO = {
+      nombre: this.distritoEnModal.nombre,
+      idProvincia: this.distritoEnModal.idProvincia!,
+    
+    };
+
     if (this.modalModo === 'crear') {
-      this.crudService
-        .create('provincias', this.provinciaEnModal as ProvinciaRequestDTO)
-        .subscribe({
-          next: () => {
-            this.getProvincias();
-            this.modalComponent.close();
-            this.alertModal.open(
-              'Creado',
-              'El provincia ha sido creado exitosamente.'
-            );
-          },
-          error: (error) => {
-            const err = this.errorHandler.getErrorData(error);
-            this.alertModal.open(err.title, err.message, err.details);
-          },
-        });
+      this.crudService.create('distritos', distritoRequest).subscribe({
+        next: () => {
+          this.getDistritos();
+          this.modalComponent.close();
+          this.alertModal.open(
+            'Creado',
+            'El Distrito ha sido creado exitosamente.'
+          );
+        },
+        error: (error) => {
+          const err = this.errorHandler.getErrorData(error);
+          this.alertModal.open(err.title, err.message, err.details);
+        },
+      });
     }
 
     if (this.modalModo === 'editar') {
       this.crudService
-        .update(
-          'provincias',
-          this.provinciaEnModal.idProvincia!,
-          this.provinciaEnModal as ProvinciaRequestDTO
-        )
+        .update('distritos', this.distritoEnModal.idDistrito!, distritoRequest)
         .subscribe({
           next: () => {
-            this.getProvincias();
+            this.getDistritos();
             this.modalComponent.close();
             this.alertModal.open(
               'Actualizado',
-              'El provincia ha sido actualizado correctamente.'
+              'El Distrito ha sido actualizado correctamente.'
             );
           },
           error: (error) => {
@@ -117,20 +132,20 @@ export class ProvinciaComponent implements OnInit {
         });
     }
 
-    this.provinciaEnModal = {};
+    this.distritoEnModal = {};
   }
 
-  eliminaProvincia(id: number): void {
+  eliminarDistrito(id: number): void {
     this.confirmModal
-      .open('¿Estás seguro de que deseas eliminar este provincia?', 'eliminar')
+      .open('¿Estás seguro de que deseas eliminar este Distrito?', 'eliminar')
       .then((confirmado) => {
         if (confirmado) {
-          this.crudService.delete('provincias', id).subscribe({
+          this.crudService.delete('distritos', id).subscribe({
             next: () => {
-              this.getProvincias();
+              this.getDistritos();
               this.alertModal.open(
                 'Eliminado',
-                'El provincia ha sido eliminado correctamente.'
+                'El Distrito ha sido eliminado correctamente.'
               );
             },
             error: (error) => {

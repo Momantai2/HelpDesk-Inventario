@@ -1,9 +1,11 @@
+import { RolResponseDTO } from "./rol.model";
+
 export interface UsuarioResponseDTO {
   idUsuario: number;
   nombre?: string;
   email: string;
   password?: string;
-  idRol: number;
+  rol: RolResponseDTO;
 }
 
 export interface UsuarioRequestDTO {

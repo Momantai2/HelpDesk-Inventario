@@ -9,6 +9,13 @@ import { UsuarioComponent } from './crud/usuario/usuario.component';
 import { PrioridadComponent } from './crud/prioridad/prioridad.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { AreaComponent } from './crud/area/area.component';
+import { SubAreaComponent } from './crud/subArea/subArea.component';
+import { DistritoComponent } from './crud/distrito/distrito.component';
+import { ProvinciaComponent } from './crud/provincia/provincia.component';
+import { SucursalComponent } from './crud/sucursal/sucursal.component';
+import { TipoSucursalComponent } from './crud/tipo-sucursal/tipoSucursal.component';
+import { tipoSubAreaComponent } from './crud/tipoSubArea/tipoSubArea.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -55,10 +62,53 @@ export const routes: Routes = [
         data: { roles: [1] },
       },
       {
+        path: 'distrito',
+        component: DistritoComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'provincia',
+        component: ProvinciaComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'sucursal',
+        component: SucursalComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'tipo-sucursal',
+        component: TipoSucursalComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'areas',
+        component: AreaComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'subareas',
+        component: SubAreaComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+      {
+        path: 'tiposubareas',
+        component: tipoSubAreaComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [1] },
+      },
+
+      {
         path: 'home',
         component: HomeComponent,
         canActivate: [RoleGuard],
-        data: { roles: [1, 2] },
+        data: { roles: [1, 2, 3] },
       },
     ],
   },

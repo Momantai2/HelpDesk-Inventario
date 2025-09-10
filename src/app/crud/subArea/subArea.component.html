@@ -1,0 +1,79 @@
+<div class="crud-container">
+  <h2>Gestión de SubAreas</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">
+    Agregar SubArea
+  </button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+    <select
+      [(ngModel)]="subareaEnModal.idTipoSubArea"
+      [disabled]="modalModo === 'ver'"
+    >
+      <option [ngValue]="undefined">
+        -- Selecciona un Tipo de Sub Area --
+      </option>
+      <option
+        *ngFor="let tiposubarea of tipoSubAreas"
+        [value]="tiposubarea.idTipoSubArea"
+      >
+        {{ tiposubarea.nombre }}
+      </option>
+    </select>
+
+    <select
+      [(ngModel)]="subareaEnModal.idSucursal"
+      [disabled]="modalModo === 'ver'"
+    >
+      <option [ngValue]="undefined">-- Selecciona un Sucursal --</option>
+      <option *ngFor="let sucursal of sucursales" [value]="sucursal.idSucursal">
+        {{ sucursal.nombre }}
+      </option>
+    </select>
+  </app-modal-form>
+
+  <hr />
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Tipo Sub Area</th>
+        <th>Area</th>
+        <th>Sucursal</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let subarea of subareas">
+        <td>{{ subarea.tipoSubArea.nombre }}</td>
+        <td>{{ subarea.tipoSubArea.area.nombre }}</td>
+        <td>{{ subarea.sucursal.nombre }}</td>
+
+        <td>
+          <button class="btn btn-info btn-sm" (click)="abrirVer(subarea)">
+            Ver
+          </button>
+          <button class="btn btn-warning btn-sm" (click)="abrirEditar(subarea)">
+            Editar
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="eliminarSubArea(subarea.idSubArea)"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>

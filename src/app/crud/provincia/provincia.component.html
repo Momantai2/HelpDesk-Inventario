@@ -1,9 +1,7 @@
 <div class="crud-container">
   <h2>Gestión de Provincias</h2>
 
-  <button class="btn btn-primary" (click)="abrirCrear()">
-    Agregar Provincia
-  </button>
+  <button class="btn btn-primary" (click)="abrirCrear()">Agregar Provincia</button>
 
   <app-modal-form
     #modal
@@ -13,57 +11,32 @@
     (onSave)="confirmarAccionModal()"
     (onClose)="cancelarModal()"
   >
-    <input
-      [(ngModel)]="provinciaEnModal.nombre"
-      [readonly]="modalModo === 'ver'"
-      placeholder="Nombre de la Provincia"
-    />
-
-    <input
-      type="number"
-      [(ngModel)]="provinciaEnModal.idDepartamento"
-      [readonly]="modalModo === 'ver'"
-      placeholder="ID del Departamento"
-    />
+    <input [(ngModel)]="provinciaEnModal.nombre" [readonly]="modalModo === 'ver'" placeholder="Descripción" />
   </app-modal-form>
 
   <hr />
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>ID Departamento</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let provincia of provincias">
-        <td>{{ provincia.id }}</td>
-        <td>{{ provincia.nombre }}</td>
-        <td>{{ provincia.idDepartamento }}</td>
-        <td>
-          <button class="btn btn-info btn-sm" (click)="abrirVer(provincia)">
-            Ver
-          </button>
-          <button
-            class="btn btn-warning btn-sm"
-            (click)="abrirEditar(provincia)"
-          >
-            Editar
-          </button>
-          <button
-            class="btn btn-danger btn-sm"
-            (click)="eliminarProvincia(provincia.id)"
-          >
-            Eliminar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let provincia of provincias">
+      <td>{{ provincia.nombre }}</td>
+      <td>
+        <button class="btn btn-info btn-sm" (click)="abrirVer(provincia)">Ver</button>
+        <button class="btn btn-warning btn-sm" (click)="abrirEditar(provincia)">Editar</button>
+        <button class="btn btn-danger btn-sm" (click)="eliminaProvincia(provincia.idProvincia)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 </div>
 
 <app-confirm-modal #confirmModal></app-confirm-modal>
 <app-alert-modal #alertModal></app-alert-modal>
+

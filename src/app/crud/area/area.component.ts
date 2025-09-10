@@ -6,10 +6,10 @@ import { ModalFormComponent } from '../../shared/modal-form/modal-form.component
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { AlertModalComponent } from '../../shared/alert-modal/alert-modal.component';
 import { ErrorHandlerService } from '../../core/error/errorhandler.service';
-import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventario/provinciamodel';
+import { AreaRequestDTO, AreaResponseDTO } from '../../model/inventario/area.model';
 
 @Component({
-  selector: 'app-provincia',
+  selector: 'app-area',
   imports: [
     FormsModule,
     NgFor,
@@ -17,12 +17,12 @@ import { ProvinciaRequestDTO, ProvinciaResponseDTO } from '../../model/inventari
     ConfirmModalComponent,
     AlertModalComponent,
   ],
-  templateUrl: './provincia.component.html',
+  templateUrl: './area.component.html',
   styleUrls: ['../crud.component.css'], // sube una carpeta para llegar a "crud" donde está el CSS
 })
-export class ProvinciaComponent implements OnInit {
-  provincias: ProvinciaResponseDTO[] = [];
-  provinciaEnModal: Partial<ProvinciaResponseDTO> = {};
+export class AreaComponent implements OnInit {
+  areas: AreaResponseDTO[] = [];
+  areaEnModal: Partial<AreaResponseDTO> = {};
   modalModo: 'crear' | 'editar' | 'ver' = 'crear';
   modalTitulo = '';
 
@@ -31,17 +31,17 @@ export class ProvinciaComponent implements OnInit {
   @ViewChild(AlertModalComponent) alertModal!: AlertModalComponent;
 
   constructor(
-    private crudService: CrudService<ProvinciaResponseDTO, ProvinciaRequestDTO>,
+    private crudService: CrudService<AreaResponseDTO, AreaRequestDTO>,
     private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
-    this.getProvincias();
+    this.getAreas();
   }
 
-  getProvincias(): void {
-    this.crudService.getAll('provincias').subscribe({
-      next: (data) => (this.provincias = data),
+  getAreas(): void {
+    this.crudService.getAll('areas').subscribe({
+      next: (data) => (this.areas = data),
       error: (error) => {
         const err = this.errorHandler.getErrorData(error);
         this.alertModal.open(err.title, err.message, err.details);
@@ -51,40 +51,40 @@ export class ProvinciaComponent implements OnInit {
 
   abrirCrear(): void {
     this.modalModo = 'crear';
-    this.modalTitulo = 'Crear Provincia';
-    this.provinciaEnModal = {};
+    this.modalTitulo = 'Crear Area';
+    this.areaEnModal = {};
     this.modalComponent.open();
   }
 
-  abrirEditar(provincia: ProvinciaResponseDTO): void {
+  abrirEditar(area: AreaResponseDTO): void {
     this.modalModo = 'editar';
-    this.modalTitulo = 'Editar Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Editar Area';
+    this.areaEnModal = { ...area };
     this.modalComponent.open();
   }
 
-  abrirVer(provincia: ProvinciaResponseDTO): void {
+  abrirVer(area: AreaResponseDTO): void {
     this.modalModo = 'ver';
-    this.modalTitulo = 'Detalle del Provincia';
-    this.provinciaEnModal = { ...provincia };
+    this.modalTitulo = 'Detalle del Area';
+    this.areaEnModal = { ...area };
     this.modalComponent.open();
   }
 
   cancelarModal(): void {
-    this.provinciaEnModal = {};
+    this.areaEnModal = {};
   }
 
   confirmarAccionModal(): void {
     if (this.modalModo === 'crear') {
       this.crudService
-        .create('provincias', this.provinciaEnModal as ProvinciaRequestDTO)
+        .create('areas', this.areaEnModal as AreaRequestDTO)
         .subscribe({
           next: () => {
-            this.getProvincias();
+            this.getAreas();
             this.modalComponent.close();
             this.alertModal.open(
               'Creado',
-              'El provincia ha sido creado exitosamente.'
+              'El area ha sido creado exitosamente.'
             );
           },
           error: (error) => {
@@ -97,17 +97,17 @@ export class ProvinciaComponent implements OnInit {
     if (this.modalModo === 'editar') {
       this.crudService
         .update(
-          'provincias',
-          this.provinciaEnModal.idProvincia!,
-          this.provinciaEnModal as ProvinciaRequestDTO
+          'areas',
+          this.areaEnModal.idArea!,
+          this.areaEnModal as AreaRequestDTO
         )
         .subscribe({
           next: () => {
-            this.getProvincias();
+            this.getAreas();
             this.modalComponent.close();
             this.alertModal.open(
               'Actualizado',
-              'El provincia ha sido actualizado correctamente.'
+              'El area ha sido actualizado correctamente.'
             );
           },
           error: (error) => {
@@ -117,20 +117,20 @@ export class ProvinciaComponent implements OnInit {
         });
     }
 
-    this.provinciaEnModal = {};
+    this.areaEnModal = {};
   }
 
-  eliminaProvincia(id: number): void {
+  eliminaArea(id: number): void {
     this.confirmModal
-      .open('¿Estás seguro de que deseas eliminar este provincia?', 'eliminar')
+      .open('¿Estás seguro de que deseas eliminar este area?', 'eliminar')
       .then((confirmado) => {
         if (confirmado) {
-          this.crudService.delete('provincias', id).subscribe({
+          this.crudService.delete('areas', id).subscribe({
             next: () => {
-              this.getProvincias();
+              this.getAreas();
               this.alertModal.open(
                 'Eliminado',
-                'El provincia ha sido eliminado correctamente.'
+                'El area ha sido eliminado correctamente.'
               );
             },
             error: (error) => {

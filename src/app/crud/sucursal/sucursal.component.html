@@ -1,0 +1,74 @@
+<div class="crud-container">
+  <h2>Gestión de Sucursales</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">
+    Agregar Sucursal
+  </button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+   
+    <input
+      [(ngModel)]="sucursalEnModal.nombre"
+      [readonly]="modalModo === 'ver'"
+      placeholder="nombre"
+    />
+  
+    <select [(ngModel)]="sucursalEnModal.idDistrito" [disabled]="modalModo === 'ver'">
+      <option [ngValue]="undefined">-- Selecciona una Ubicacion --</option>
+      <option *ngFor="let distrito of distritos" [value]="distrito.idDistrito">
+        {{ distrito.nombre }}
+      </option>
+    </select>
+    
+  <select [(ngModel)]="sucursalEnModal.idTipoSucursal" [disabled]="modalModo === 'ver'">
+  <option [ngValue]="undefined">-- Selecciona un Tipo de Sucursal --</option>
+  <option *ngFor="let tiposucursal of tipossucursales" [ngValue]="tiposucursal.idTipoSucursal">
+    {{ tiposucursal.nombre }}
+  </option>
+</select>
+  </app-modal-form>
+
+  <hr />
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Ubicacion</th>
+        <th>tipo-sucursal</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sucursal of sucursales">
+        <td>{{ sucursal.nombre }}</td>
+        <td>{{ sucursal.distrito.nombre }}</td>
+        <td>{{ sucursal.tiposucursal.nombre }}</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="abrirVer(sucursal)">
+            Ver
+          </button>
+          <button class="btn btn-warning btn-sm" (click)="abrirEditar(sucursal)">
+            Editar
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="eliminarSucursal(sucursal.idSucursal)"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>

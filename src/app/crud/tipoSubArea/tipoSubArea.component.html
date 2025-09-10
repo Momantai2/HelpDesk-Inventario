@@ -1,0 +1,71 @@
+<div class="crud-container">
+  <h2>Gestión de tipoSubAreas</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">
+    Agregar tipoSubArea
+  </button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+    <input
+      [(ngModel)]="tipoSubAreaEnModal.nombre"
+      [readonly]="modalModo === 'ver'"
+      placeholder="Descripción"
+    />
+    <select
+      [(ngModel)]="tipoSubAreaEnModal.idArea"
+      [disabled]="modalModo === 'ver'"
+    >
+      <option [ngValue]="undefined">-- Selecciona un Area --</option>
+      <option *ngFor="let area of areas" [value]="area.idArea">
+        {{ area.nombre }}
+      </option>
+    </select>
+  </app-modal-form>
+
+  <hr />
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Area</th>
+
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tipoSubArea of tipoSubAreas">
+        <td>{{ tipoSubArea.nombre }}</td>
+        <td>{{ tipoSubArea.area.nombre }}</td>
+
+        <td>
+          <button class="btn btn-info btn-sm" (click)="abrirVer(tipoSubArea)">
+            Ver
+          </button>
+          <button
+            class="btn btn-warning btn-sm"
+            (click)="abrirEditar(tipoSubArea)"
+          >
+            Editar
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="eliminatipoSubArea(tipoSubArea.idTipoSubArea)"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>

@@ -152,9 +152,6 @@ export class ComentarioComponent implements OnInit, OnChanges {
       texto: '',
       idTicket: this.ticketId,
       idUsuario: usuarioActual.idUsuario,
-      // Asigna el ID del ticket por defecto si se conoce
-      // Si no, el usuario lo seleccionará en el modal
-      // Establece la prioridad y el estado por defecto
     };
     this.modalComponent.open();
   }

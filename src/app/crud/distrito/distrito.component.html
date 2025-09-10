@@ -1,0 +1,66 @@
+<div class="crud-container">
+  <h2>Gestión de Distritos</h2>
+
+  <button class="btn btn-primary" (click)="abrirCrear()">
+    Agregar Distrito
+  </button>
+
+  <app-modal-form
+    #modal
+    [title]="modalTitulo"
+    [hideSave]="modalModo === 'ver'"
+    [readonly]="modalModo === 'ver'"
+    (onSave)="confirmarAccionModal()"
+    (onClose)="cancelarModal()"
+  >
+   
+    <input
+      [(ngModel)]="distritoEnModal.nombre"
+      [readonly]="modalModo === 'ver'"
+      placeholder="nombre"
+    />
+    
+
+    <select [(ngModel)]="distritoEnModal.idProvincia" [disabled]="modalModo === 'ver'">
+      <option [ngValue]="undefined">-- Selecciona un provincia --</option>
+      <option *ngFor="let provincia of provincias" [value]="provincia.idProvincia">
+        {{ provincia.nombre }}
+      </option>
+    </select>
+  </app-modal-form>
+
+  <hr />
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Provincia</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let distrito of distritos">
+        <td>{{ distrito.nombre }}</td>
+        <td>{{ distrito.provincia.nombre }}</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="abrirVer(distrito)">
+            Ver
+          </button>
+          <button class="btn btn-warning btn-sm" (click)="abrirEditar(distrito)">
+            Editar
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="eliminarDistrito(distrito.idDistrito)"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-confirm-modal #confirmModal></app-confirm-modal>
+<app-alert-modal #alertModal></app-alert-modal>

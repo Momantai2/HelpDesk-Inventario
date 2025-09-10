@@ -3,7 +3,7 @@
     <div class="comment-header">
       <div class="comment-avatar">👤</div>
       <div class="comment-info">
-        <p class="comment-author">{{ c.usuarioNombre }}</p>
+        <p class="comment-author">{{ c.nombreusuarioactual }}</p>
         <p class="comment-date">{{ c.fechaCreacion | date : "medium" }}</p>
       </div>
     </div>
@@ -65,7 +65,7 @@
         <tr *ngFor="let comentario of comentarios">
           <td>{{ comentario.texto }}</td>
           <td>{{ comentario.idTicket }}</td>
-          <td>{{ comentario.usuarioNombre }}</td>
+          <td>{{ comentario.nombreusuarioactual }}</td>
           <td>
             <button class="btn btn-info btn-sm" (click)="abrirVer(comentario)">
               Ver
